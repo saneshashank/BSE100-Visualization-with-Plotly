@@ -11,7 +11,7 @@ fig_caption: true
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## R Markdown
+## Synopsis
 
 This project visualizes Bombay Stock Exchange market variation from year 2001 to year 2017 using the S&P BSE 100 index data. More Information about the S&P BSE100 can be found at: http://www.bseindia.com/indices/DispIndex.aspx?iname=BSE100&index_Code=22&page=5B6DA9E7-CD6D-48D3-880A-05D1E9E1AA56
 
@@ -117,7 +117,7 @@ plot_ly(data=dfBSE,x=~Date,color = I("black"))%>%
 ```
 
 ## {.smaller}
-This completes demonstration basic presentation using Rmarkdown and plotly.
+This completes demonstration of basic presentation using Rmarkdown and plotly.
 Additional information about R markdown ioslides presentation can be found at: http://rmarkdown.rstudio.com/ioslides_presentation_format.html#overview
 
 Addition information for plotly with R can be found at:
