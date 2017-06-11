@@ -1,0 +1,127 @@
+---
+title: "Bombay Stock Exchange Index Visualization using Plotly"
+author: "Shashank Sane"
+date: "June 11, 2017"
+output: ioslides_presentation
+
+fig_caption: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## R Markdown
+
+This project visualizes Bombay Stock Exchange market variation from year 2001 to year 2017 using the S&P BSE 100 index data. More Information about the S&P BSE100 can be found at: http://www.bseindia.com/indices/DispIndex.aspx?iname=BSE100&index_Code=22&page=5B6DA9E7-CD6D-48D3-880A-05D1E9E1AA56
+
+The data for BSE 100 can be downloaded from: http://www.bseindia.com/indices/IndexArchiveData.aspx
+
+The visualization has been done using the Plotly package in R, furthermore two additional methods of achieving the same visualization has been shown in presentation.
+
+## Data load and data wrangling 1.. {.smaller}
+
+In this slide we will focus on creating a clean data frame for our visualization.
+
+```{r chunk1, cache = F, echo = T, message = F, warning = F, tidy = F,eval=T}
+# load the required libraries
+library(plotly)
+library(tidyr)
+library(dplyr)
+library(lubridate)
+
+```
+
+```{r chunk10, echo = TRUE,comment=""}
+# load the dataset from downloaded csv file.
+dfBSE <- read.csv("BSE100.csv",header = TRUE,stringsAsFactors = FALSE
+                  ,row.names = NULL)
+
+## once the data frame is loaded it can be seen that there is a mismatch 
+## in column names and an extra column with null values has been loaded.
+head(dfBSE,3)
+
+# to correct this we will modify the dataframe in next slide
+
+```
+
+##  data wrangling 2 and plotting{.smaller}
+
+```{r chunk15, echo = TRUE}
+# extract column names
+names <- colnames(dfBSE[,2:6])
+
+# remove last column
+dfBSE <- dfBSE[,1:5]
+
+# re apply column names
+colnames(dfBSE) <- names
+
+# convert Date to datetime object using lubridate
+dfBSE$Date <- dmy(dfBSE$Date)
+
+# gather all columns except Date column into two columns index and value
+# store this in new data frame dfBSE.Modified
+dfBSE.Modified <- gather(dfBSE,index,value,-Date)
+```
+create plot using plotly
+
+```{r chunk25, echo = TRUE,eval=FALSE}
+plot_ly(data=dfBSE.Modified,x=~Date,y=~value, color = ~index,mode="line")%>%
+  layout(title = "S&P BSE 100 Index (2001-2017)",
+    xaxis = list(title = "Year",showgrid = T),yaxis = list( 
+    title = "BSE 100 Index Value") 
+  )
+
+```
+
+## {.smaller }
+
+```{r chunk30,  cache = F, echo = F, message = F, warning = F, tidy = F,eval=T}
+plot_ly(data=dfBSE.Modified,x=~Date,y=~value, color = ~index,mode="line")%>%
+  layout(title = "S&P BSE 100 Index (2001-2017)",
+    xaxis = list(title = "Year",showgrid = T),yaxis = list( 
+    title = "BSE 100 Index Value") 
+  )
+```
+
+
+We can see from the above plot that in general there is an increasing trend to the stock market index, this is commensurate with average 7% growth rate in Indian GDP. Also visible is a local minima around Oct-2008 period which coincides with the global economic recession period.
+
+## Alternative implementation {.smaller .build}
+
+alternatively the same plot can be drawn using plotly functional
+aspect which allows one plotly object to be passed to another plotly
+function.
+```{r chunk40, cache = F, echo = T, eval=F,fig.cap="BSE 100 Index"}
+add_lines(plot_ly(data=dfBSE.Modified,x=~Date,y=~value, color = ~index))%>%
+  layout(title = "S&P BSE 100 Index (2001-2017)",
+    xaxis = list(title = "Year",showgrid = T),yaxis = list( 
+    title = "BSE 100 Index Value",titlefont="Courier New") 
+  )
+```
+The same plot can also be generated from original data frame dfBSE as shown below, here we pass the plot_ly object to add_lines() for adding lines corresponding to "High" and "Low":
+
+```{r chunk45, cache = F, echo = T, eval=F}
+
+# have added only high and low value
+plot_ly(data=dfBSE,x=~Date,color = I("black"))%>%
+  add_lines(y = ~High, color = I("blue"))%>%
+  add_lines(y = ~Low, color = I("red"))%>%
+  layout(title = "S&P BSE 100 Index (2001-2017)",
+    xaxis = list(title = "Year",showgrid = T),yaxis = list( 
+    title = "BSE 100 Index Value") 
+  )%>%
+  
+
+```
+
+## {.smaller}
+This completes demonstration basic presentation using Rmarkdown and plotly.
+Additional information about R markdown ioslides presentation can be found at: http://rmarkdown.rstudio.com/ioslides_presentation_format.html#overview
+
+Addition information for plotly with R can be found at:
+https://plot.ly/r/
+
+
+### **Thank You!!.**
